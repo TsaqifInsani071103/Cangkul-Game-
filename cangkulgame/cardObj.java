@@ -15,8 +15,23 @@ public class cardObj {
     return suitAndRank; 
   }
 
+  private String checkRank(int rank){
+    switch(rank){
+      case 11: 
+        return "Jack"; 
+      case 12: 
+        return "Queen";
+      case 13: 
+        return "King";
+      case 14: 
+        return "Ace"; 
+      default: 
+        return "" + rank; 
+    }
+  } 
+
   public String toString(){
-    String cardInStringFormat = "rank: " + rank + ", suit: " + suit; 
+    String cardInStringFormat = "rank: " + checkRank(rank) + " suit: " + suit; 
     return cardInStringFormat; 
   }
 }
