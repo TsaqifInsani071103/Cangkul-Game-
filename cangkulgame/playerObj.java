@@ -9,7 +9,5 @@ public class playerObj {
     this.playerNumber = playerNumber; 
   } 
 
-  
-
 
 }
