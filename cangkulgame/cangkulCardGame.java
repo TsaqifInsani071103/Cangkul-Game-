@@ -54,6 +54,7 @@ public class cangkulCardGame {
     + "The person with the least cards will win by default");
     System.out.println("It's a tie if more than one person have the least number of cards"); 
     System.out.println("Enjoy!"); 
+    System.out.println(); 
   } 
 
   private boolean playOneRound(){
