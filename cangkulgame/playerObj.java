@@ -15,6 +15,26 @@ public class playerObj {
     playerHand.add(deckOnTable.getCardFromDeck()); 
   }
 
+  protected void playerTakeBackCard(cardObj card){
+    playerHand.add(card); 
+  }
+
+  protected String displayHand(){
+    return playerHand.toString(); 
+  } 
+
+  protected int sizeOfHand(){
+    return playerHand.size(); 
+  }
+
+  protected String takenCard(){
+    return playerHand.get(playerHand.size()-1).toString(); 
+  }
+
+  protected cardObj launchCard(int index){
+    return playerHand.remove(index); 
+  } 
+
   public String toString(){
     return "" + playerNumber; 
   }

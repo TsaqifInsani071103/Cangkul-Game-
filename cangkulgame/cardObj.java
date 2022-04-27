@@ -10,10 +10,14 @@ public class cardObj {
     this.suit = suit;  
   }
 
-  public String getSuitAndRank(){
-    String suitAndRank = "" + rank + " " + suit; 
-    return suitAndRank; 
+  public String getSuit(){
+    return suit; 
   }
+
+  //this one for testign 
+  public int getRank(){
+    return rank; 
+  } 
 
   private String checkRank(int rank){
     switch(rank){

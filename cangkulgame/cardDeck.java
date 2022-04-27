@@ -3,7 +3,8 @@ package cangkulgame;
 import java.util.Stack; 
 import java.util.Random; 
 public class cardDeck {
-  private Stack<cardObj> deckOfCards = new Stack<cardObj>(); 
+  //make this private again
+  public Stack<cardObj> deckOfCards = new Stack<cardObj>(); 
 
   public cardDeck(){
     makeStackOfCards(deckOfCards); 

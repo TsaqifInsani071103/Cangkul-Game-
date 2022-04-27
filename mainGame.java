@@ -18,7 +18,8 @@ public class mainGame{
     // System.out.println(player.playerHand);
     // System.out.println(playerTwo.playerHand); 
     // System.out.println(deckObject.deckOfCards.size()); 
-    cangkulCardGame game = new cangkulCardGame(2); 
+    cangkulCardGame game = new cangkulCardGame(1);
+    game.play();  
   }
 
 }
