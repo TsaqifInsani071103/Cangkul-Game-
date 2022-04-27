@@ -8,6 +8,7 @@ notes:
   We've separated the code for the cangkul game itself into a package of their own called 'cangkulgame'. 
   Since we thought it'd be nice to have experience utilizing java packages. 
   Plus, it makes the structure of the program cleaner and more organized. 
+  We used vscode for our IDE and git to keep track of the program's progress. 
   Then, for extra credits: 
     - we used both stacks and queues in this program. Queues in cangkulCardGame.java for the playersList, 
       Stacks in cardDeck java for the deck of Cards. 

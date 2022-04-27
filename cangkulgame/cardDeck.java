@@ -7,9 +7,12 @@ public class cardDeck {
   //make this private again
   protected Stack<cardObj> deckOfCards = new Stack<cardObj>(); 
 
+  //make the stack of cards with 52 cards 
   public cardDeck(){
     makeStackOfCards(deckOfCards); 
   }
+
+  //add cards to deckOfCards repeating 4 times according to the suit array 
   private void makeStackOfCards(Stack<cardObj> collectionObject){
     String[] suits = {"Diamonds", "Spades", "Clubs", "Hearts"};
     for (String suit: suits){
@@ -17,6 +20,7 @@ public class cardDeck {
     }
   } 
 
+  //add cards to deckOfCards repeating 14 times according to how many ranks there are 
   private void addCardsToDeck(String suit, Stack<cardObj> collectionObject){
     int[] rank = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14}; 
     for (int i: rank){
@@ -24,6 +28,9 @@ public class cardDeck {
     }
   } 
 
+  //shuffle the deck of cards, 
+  //divide the card by two, and stacking them on top of each other one by one, 
+  //simulating one of the real life card shuffle techniques 
   public void shuffleDeck(){
     Random randomObject = new Random(); 
     int halfOfDeck = deckOfCards.size() / 2; 
@@ -47,10 +54,11 @@ public class cardDeck {
      }
   } 
 
+  //get the top card from the deck 
   protected cardObj getCardFromDeck(){
     return deckOfCards.pop(); 
   }
-
+  //returns the string format of the stack of cards 
   public String toString(){
     return deckOfCards.toString(); 
   }

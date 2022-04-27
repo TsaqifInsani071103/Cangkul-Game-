@@ -5,23 +5,30 @@ import java.util.Random;
 import java.util.Scanner; 
 import java.util.ArrayList; 
 
+//cangkulCardGame class 
 public class cangkulCardGame {
   private int numberOfPlayers = 1; 
   private cardDeck deckOnTable; 
   private Queue<playerObj> playersList = new LinkedList<playerObj>(); 
 
+  //constructor method for cangkulCardGame 
   public cangkulCardGame(int numberOfPlayers){
+    //initialize number of players 
     this.numberOfPlayers = numberOfPlayers; 
+    //initialize card deck 
     this.deckOnTable = new cardDeck(); 
+    //add players to the queue 
     addPlayersToList(); 
   }
 
+  //add players to the queue 
   private void addPlayersToList(){
     for (int i = 1; i <= numberOfPlayers; i++){
       playersList.add(new playerObj(i, deckOnTable));  
     }
   }
 
+  //shuffle the deck random times 
   private void shuffleDeckMultipleTimes(){
     Random randomObj = new Random(); 
     int randomNumber = randomObj.nextInt(4) + 3; 
@@ -30,19 +37,25 @@ public class cangkulCardGame {
     }
   } 
 
+  //play the cangkul program 
   public void play(){
     System.out.println(); 
     Scanner input = new Scanner(System.in); 
+    //shuffle the deck 
     shuffleDeckMultipleTimes(); 
+    //all players initially take 7 cards 
     playersTakeSeven(); 
+    //print out the instructions 
     instructions(); 
     boolean thereIsWinner = false; 
+    //keep playing while there is no winner 
     while(!thereIsWinner){
       thereIsWinner = playOneRound(); 
     }
 
   }
 
+  //prints out the instructions 
   private void instructions(){
     System.out.println("This game is a local game from Indonesia, It's played much like UNO" 
     + " in that, the suits need to match with the round's chosen suit." 
@@ -57,19 +70,22 @@ public class cangkulCardGame {
     System.out.println(); 
   } 
 
+  //plays one round 
   private boolean playOneRound(){
-    cardObj biggestRank = new cardObj(0,"placeholder"); 
-    String tableSuit = "none";
-    playerObj roundWinner = new playerObj(0, deckOnTable); 
-    boolean gameWon = false; 
-    for (playerObj player: playersList){
-      playerObj currentPlayer = player; 
-      if (!tableSuit.equals("none")){
+    cardObj biggestRank = new cardObj(0,"placeholder"); //biggest rank to determine the round's largest card value 
+    String tableSuit = "none"; // to determine the round's chosen suit 
+    playerObj roundWinner = new playerObj(0, deckOnTable); //the player object who won the round 
+    boolean gameWon = false; //false if no winner yet, true if there is winner 
+    for (playerObj player: playersList){ // iterate through the player list 
+      playerObj currentPlayer = player; //current player 
+      if (!tableSuit.equals("none")){ //if its not the first round, show the card to beat in the round 
         System.out.println("Card to beat is: " + biggestRank.toString()); 
       }
       System.out.println("It is player " + currentPlayer + "'s turn");
-      int index = processPlayerInput(currentPlayer, tableSuit); 
-      if(index == 1000){
+      int index = processPlayerInput(currentPlayer, tableSuit); //check if input is valid and if we can translate it 
+      //into an integer 
+      if(index == 1000){ //if the card deck is empty, we see who has the least amount of cards, and they will win 
+        //if there are two with the least amount, its a tie. 
         playerObj leastAmountOfCards = currentPlayer;
         ArrayList<playerObj> leastAmountOfCardsPlayers = new ArrayList<playerObj>(); 
         for (playerObj thisPlayer: playersList){
@@ -87,29 +103,32 @@ public class cangkulCardGame {
         gameWon = true;
         break; 
       } 
+      //put forth the player's chosen card 
       cardObj chosenCard = currentPlayer.launchCard(index); 
       chosenCard = chooseValidCard(tableSuit, chosenCard, currentPlayer); 
+      //if currentplayer runs out of cards, they win 
       if (winGame(currentPlayer)){
         System.out.println("Player " + currentPlayer + " WINS!!!!"); 
         gameWon = true; 
         break; 
       } 
       System.out.println("Player " + currentPlayer + " chose: " + chosenCard); 
-      System.out.println();
-      tableSuit = chosenCard.getSuit(); 
+      System.out.println();//prints out chosen card 
+      tableSuit = chosenCard.getSuit(); //the round's suit is the card's suit 
       if (chosenCard.getRank() > biggestRank.getRank()){
         roundWinner = player; 
         biggestRank = chosenCard; 
-      }
+      }//if the rank is bigger than the previous rank, biggest rank is set to current rank 
     }
     if (gameWon) return true; 
-    revolvePlayersList(roundWinner); 
-    System.out.print("\033[H\033[2J");
+    revolvePlayersList(roundWinner); //the player who wins will start the next round first
+    System.out.print("\033[H\033[2J");//clears the console 
     System.out.println("Player " + roundWinner + " won the round"); 
     return false; 
   } 
 
 
+  //prompts the player for a choice of card 
   private void promptPlayerChoice(playerObj currentPlayer){
     System.out.println();
     System.out.println("This is your hand: ");
@@ -118,6 +137,7 @@ public class cangkulCardGame {
     System.out.println("press -1 if you want to take a card from the deck"); 
   } 
 
+  //checks if the player input is valid 
   private int processPlayerInput(playerObj currentPlayer, String tableSuit){
     promptPlayerChoice(currentPlayer); 
     Scanner input = new Scanner(System.in); 
@@ -127,6 +147,7 @@ public class cangkulCardGame {
     return Integer.parseInt(index); 
   } 
 
+  //if player input isnt valid, we keep on asking until they give valid input 
   private String whileNumberIsntValid(String index, playerObj currentPlayer){
     Scanner input = new Scanner(System.in);  
     while(!checkIfNumberValid(index, currentPlayer)){
@@ -137,6 +158,8 @@ public class cangkulCardGame {
     return index; 
   } 
 
+  //if player input wants to take from deck, we give 
+  //if deck is finished a player will win by default 
   private String whileTakeFromDeck(String index, playerObj currentPlayer, String tableSuit){
     Scanner input = new Scanner(System.in); 
     while(Integer.parseInt(index) == -1){
@@ -153,6 +176,7 @@ public class cangkulCardGame {
     return index; 
   } 
 
+  //check if user input for index is a number 
   private boolean checkIfNumberValid(String index, playerObj currentPlayer){
     try{
       if (Integer.parseInt(index) < currentPlayer.sizeOfHand()){
@@ -163,6 +187,8 @@ public class cangkulCardGame {
     return false; 
   } 
 
+  //check if the card chosen has the same suit 
+  //take back the card put forth if the card doesn't match the suit 
   private cardObj chooseValidCard(String tableSuit, cardObj chosenCard, playerObj currentPlayer){
     cardObj validCard = chosenCard; 
     while(!checkChoice(tableSuit, validCard.getSuit())){
@@ -175,6 +201,7 @@ public class cangkulCardGame {
     return validCard; 
   } 
 
+  //check if the card matches the suit 
   private boolean checkChoice(String tableSuit, String chosenSuit){
     if (!tableSuit.equals("none")){
       if (tableSuit.equals(chosenSuit)){
@@ -186,6 +213,7 @@ public class cangkulCardGame {
     return true; 
   }
 
+  //the winner of the round will go first the next round, still keeping the same order of play. 
   private void revolvePlayersList(playerObj player){
     Queue<playerObj> queuePlaceholder = new LinkedList<playerObj>(); 
     while(playersList.peek() != player){
@@ -194,6 +222,7 @@ public class cangkulCardGame {
     playersList.addAll(queuePlaceholder); 
   }
 
+  //each player takes seven cards initially 
   private void playersTakeSeven(){
     for (playerObj players: playersList){
       for (int i =0; i< 7; i++){
@@ -202,6 +231,7 @@ public class cangkulCardGame {
     }
   }  
 
+  //if the deck of cards is empty, a player will win by default 
   private boolean winGameByDefault(){
     if (deckOnTable.deckOfCards.isEmpty()){
       return true; 
@@ -209,6 +239,7 @@ public class cangkulCardGame {
     return false; 
   }
 
+  //if player has no more cards in their hand, they win. 
   private boolean winGame(playerObj player){ 
     if (player.sizeOfHand() == 0){
       return true; 
