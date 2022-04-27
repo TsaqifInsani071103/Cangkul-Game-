@@ -35,13 +35,26 @@ public class cangkulCardGame {
     Scanner input = new Scanner(System.in); 
     shuffleDeckMultipleTimes(); 
     playersTakeSeven(); 
-    System.out.println("This is cangkul, play da game yuh");
+    instructions(); 
     boolean thereIsWinner = false; 
     while(!thereIsWinner){
       thereIsWinner = playOneRound(); 
     }
 
   }
+
+  private void instructions(){
+    System.out.println("This game is a local game from Indonesia, It's played much like UNO" 
+    + " in that, the suits need to match with the round's chosen suit." 
+    + " If one does not have said suit, they will have to take from the deck until they get one.");
+    System.out.println("In order to win the round, you must put forth the card with the highest rank: " 
+    + "jack<queen<king<ace");
+    System.out.println("When one person has run out of cards, they win the game");
+    System.out.println("If no one has yet won and the deck has already ran out, " 
+    + "The person with the least cards will win by default");
+    System.out.println("It's a tie if more than one person have the least number of cards"); 
+    System.out.println("Enjoy!"); 
+  } 
 
   private boolean playOneRound(){
     cardObj biggestRank = new cardObj(0,"placeholder"); 
