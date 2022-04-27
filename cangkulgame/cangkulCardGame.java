@@ -3,6 +3,7 @@ import java.util.Queue;
 import java.util.LinkedList; 
 import java.util.Random; 
 import java.util.Scanner; 
+import java.util.ArrayList; 
 
 public class cangkulCardGame {
   private int numberOfPlayers = 1; 
@@ -53,11 +54,29 @@ public class cangkulCardGame {
         System.out.println("Card to beat is: " + biggestRank.toString()); 
       }
       System.out.println("It is player " + currentPlayer + "'s turn");
-      int index = processPlayerInput(currentPlayer); 
+      int index = processPlayerInput(currentPlayer, tableSuit); 
+      if(index == 1000){
+        playerObj leastAmountOfCards = currentPlayer;
+        ArrayList<playerObj> leastAmountOfCardsPlayers = new ArrayList<playerObj>(); 
+        for (playerObj thisPlayer: playersList){
+          if (thisPlayer.sizeOfHand() <= leastAmountOfCards.sizeOfHand()){
+            leastAmountOfCards = thisPlayer; 
+            leastAmountOfCardsPlayers.add(thisPlayer); 
+          } 
+        }
+        if (leastAmountOfCardsPlayers.size() > 1){
+          System.out.println("No one wins, its a tie!");
+        }else{
+          System.out.println("Player " + leastAmountOfCards + " wins by default since deck is" 
+          + " finished and the player has the least amount of cards"); 
+        }
+        gameWon = true;
+        break; 
+      } 
       cardObj chosenCard = currentPlayer.launchCard(index); 
       chosenCard = chooseValidCard(tableSuit, chosenCard, currentPlayer); 
       if (winGame(currentPlayer)){
-        System.out.println("Player" + currentPlayer + " WINS!!!!"); 
+        System.out.println("Player " + currentPlayer + " WINS!!!!"); 
         gameWon = true; 
         break; 
       } 
@@ -85,17 +104,49 @@ public class cangkulCardGame {
     System.out.println("press -1 if you want to take a card from the deck"); 
   } 
 
-  private int processPlayerInput(playerObj currentPlayer){
+  private int processPlayerInput(playerObj currentPlayer, String tableSuit){
     promptPlayerChoice(currentPlayer); 
     Scanner input = new Scanner(System.in); 
-    int index = input.nextInt(); 
-    while(index == -1){
-      currentPlayer.playerTakeCard(); 
-      System.out.println("You took "+ currentPlayer.takenCard());
-      promptPlayerChoice(currentPlayer); 
-      index = input.nextInt(); 
+    String index = input.nextLine(); 
+    index = whileNumberIsntValid(index, currentPlayer); 
+    index = whileTakeFromDeck(index, currentPlayer, tableSuit); 
+    return Integer.parseInt(index); 
+  } 
+
+  private String whileNumberIsntValid(String index, playerObj currentPlayer){
+    Scanner input = new Scanner(System.in);  
+    while(!checkIfNumberValid(index, currentPlayer)){
+      System.out.println("Please input a valid number between 0-" + (currentPlayer.sizeOfHand()-1));
+      promptPlayerChoice(currentPlayer);
+      index = input.nextLine(); 
+    }
+    return index; 
+  } 
+
+  private String whileTakeFromDeck(String index, playerObj currentPlayer, String tableSuit){
+    Scanner input = new Scanner(System.in); 
+    while(Integer.parseInt(index) == -1){
+      if(currentPlayer.playerTakeCard(tableSuit)){
+        System.out.println("You took "+ currentPlayer.takenCard());
+      }
+      if (winGameByDefault()){
+        return "1000"; 
+      }
+      promptPlayerChoice(currentPlayer);
+      index = input.nextLine(); 
+      index = whileNumberIsntValid(index, currentPlayer); 
     } 
     return index; 
+  } 
+
+  private boolean checkIfNumberValid(String index, playerObj currentPlayer){
+    try{
+      if (Integer.parseInt(index) < currentPlayer.sizeOfHand()){
+        return true; 
+      }
+    }catch(Exception e){
+    }
+    return false; 
   } 
 
   private cardObj chooseValidCard(String tableSuit, cardObj chosenCard, playerObj currentPlayer){
@@ -104,14 +155,13 @@ public class cangkulCardGame {
       currentPlayer.playerTakeBackCard(validCard);
       System.out.println(); 
       System.out.println("The chosen card doesn't match the suit, please choose another one or retrieve another card from the deck. Press -1 to take card from deck"); 
-      int index = processPlayerInput(currentPlayer); 
+      int index = processPlayerInput(currentPlayer, tableSuit); 
       validCard = currentPlayer.launchCard(index); 
     }
     return validCard; 
   } 
 
   private boolean checkChoice(String tableSuit, String chosenSuit){
-    Scanner inputScanner = new Scanner(System.in); 
     if (!tableSuit.equals("none")){
       if (tableSuit.equals(chosenSuit)){
         return true; 
@@ -133,14 +183,19 @@ public class cangkulCardGame {
   private void playersTakeSeven(){
     for (playerObj players: playersList){
       for (int i =0; i< 7; i++){
-        players.playerTakeCard(); 
+        players.initializeHand(); 
       }
     }
   }  
 
+  private boolean winGameByDefault(){
+    if (deckOnTable.deckOfCards.isEmpty()){
+      return true; 
+    }
+    return false; 
+  }
 
   private boolean winGame(playerObj player){ 
-    System.out.println(player.sizeOfHand()); 
     if (player.sizeOfHand() == 0){
       return true; 
     }

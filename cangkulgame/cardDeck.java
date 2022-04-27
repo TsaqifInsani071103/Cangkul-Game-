@@ -2,9 +2,10 @@ package cangkulgame;
 
 import java.util.Stack; 
 import java.util.Random; 
+
 public class cardDeck {
   //make this private again
-  public Stack<cardObj> deckOfCards = new Stack<cardObj>(); 
+  protected Stack<cardObj> deckOfCards = new Stack<cardObj>(); 
 
   public cardDeck(){
     makeStackOfCards(deckOfCards); 
@@ -27,17 +28,17 @@ public class cardDeck {
     Random randomObject = new Random(); 
     int halfOfDeck = deckOfCards.size() / 2; 
     Stack<cardObj> deckStack = new Stack<cardObj>(); 
-    Stack<cardObj> deckQueue = new Stack<cardObj>(); 
+    Stack<cardObj> deckStackTwo = new Stack<cardObj>(); 
     for (int i = 0; i < halfOfDeck; i ++){
-      deckQueue.add(deckOfCards.pop()); 
+      deckStackTwo.add(deckOfCards.pop()); 
     }
     for(int i = 0; i < halfOfDeck; i ++){
       deckStack.add(deckOfCards.pop()); 
     }
-    while(!deckQueue.isEmpty() || !deckStack.isEmpty()){ 
+    while(!deckStackTwo.isEmpty() || !deckStack.isEmpty()){ 
       int randomNumber = randomObject.nextInt(2) + 1; 
       for (int i = 0; i < randomNumber; i ++){
-        if (!deckQueue.isEmpty()) deckOfCards.add(deckQueue.pop()); 
+        if (!deckStackTwo.isEmpty()) deckOfCards.add(deckStackTwo.pop()); 
       } 
       randomNumber = randomObject.nextInt(2) + 1; 
       for(int i = 0; i< randomNumber; i ++){
