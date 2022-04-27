@@ -35,7 +35,7 @@ public class cardObj {
   } 
 
   public String toString(){
-    String cardInStringFormat = "rank: " + checkRank(rank) + " suit: " + suit; 
+    String cardInStringFormat = checkRank(rank) + " of " + suit; 
     return cardInStringFormat; 
   }
 }

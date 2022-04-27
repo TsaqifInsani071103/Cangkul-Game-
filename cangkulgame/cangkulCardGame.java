@@ -21,9 +21,9 @@ public class cangkulCardGame {
     }
   }
 
-  private void shuffleDeckOnTable(){
+  private void shuffleDeckMultipleTimes(){
     Random randomObj = new Random(); 
-    int randomNumber = randomObj.nextInt(2) + 3; 
+    int randomNumber = randomObj.nextInt(4) + 3; 
     for (int i = 0; i< randomNumber ; i ++){
       deckOnTable.shuffleDeck(); 
     }
@@ -32,73 +32,53 @@ public class cangkulCardGame {
   public void play(){
     System.out.println(); 
     Scanner input = new Scanner(System.in); 
-    shuffleDeckOnTable(); 
+    shuffleDeckMultipleTimes(); 
     playersTakeSeven(); 
     System.out.println("This is cangkul, play da game yuh");
     boolean thereIsWinner = false; 
     while(!thereIsWinner){
-      playOneRound(); 
       thereIsWinner = playOneRound(); 
     }
 
   }
 
   private boolean playOneRound(){
-    Scanner input = new Scanner(System.in); 
-    int biggestRank = 0; 
+    cardObj biggestRank = new cardObj(0,"placeholder"); 
     String tableSuit = "none";
-    playerObj roundWinner = playersList.peek(); 
+    playerObj roundWinner = new playerObj(0, deckOnTable); 
+    boolean gameWon = false; 
     for (playerObj player: playersList){
       playerObj currentPlayer = player; 
-      System.out.println("It is player" + player + "'s turn");
-      System.out.println("This is your hand: ");
-      System.out.println(currentPlayer.displayHand());
-      System.out.println("which one do you want to choose? 0-" + (currentPlayer.sizeOfHand()-1)); 
-      int index = input.nextInt(); 
-      while (index == -1){
-        player.playerTakeCard();
-        index = input.nextInt(); 
+      if (!tableSuit.equals("none")){
+        System.out.println("Card to beat is: " + biggestRank.toString()); 
       }
+      System.out.println("It is player " + currentPlayer + "'s turn");
+      int index = processPlayerInput(currentPlayer); 
       cardObj chosenCard = currentPlayer.launchCard(index); 
-      while(!checkChoice(tableSuit, chosenCard.getSuit())){
-        currentPlayer.playerTakeBackCard(chosenCard);
-        System.out.println("The chosen card doesn't match the suit, please choose another one or retrieve another card from the deck. Press -1 to take card from deck"); 
-        System.out.println(currentPlayer.displayHand());
-        index = input.nextInt(); 
-        while (index == -1){
-          currentPlayer.playerTakeCard();
-          currentPlayer.displayHand(); 
-          System.out.println("which one do you want to choose? 0-" + (currentPlayer.sizeOfHand()-1));
-          index = input.nextInt(); 
-        }
-        chosenCard = currentPlayer.launchCard(index);  
-      }
+      chosenCard = chooseValidCard(tableSuit, chosenCard, currentPlayer); 
       if (winGame(currentPlayer)){
-        System.out.println("WIN!!!!"); 
-        return true; 
-      }  
-      System.out.println("You chose: " + chosenCard); 
+        System.out.println("Player" + currentPlayer + " WINS!!!!"); 
+        gameWon = true; 
+        break; 
+      } 
+      System.out.println("Player " + currentPlayer + " chose: " + chosenCard); 
       System.out.println();
       tableSuit = chosenCard.getSuit(); 
-      if (chosenCard.getRank() > biggestRank){
+      if (chosenCard.getRank() > biggestRank.getRank()){
         roundWinner = player; 
-        biggestRank = chosenCard.getRank(); 
+        biggestRank = chosenCard; 
       }
     }
-    System.out.println("This round's winner is " + roundWinner);
+    if (gameWon) return true; 
     revolvePlayersList(roundWinner); 
+    System.out.print("\033[H\033[2J");
+    System.out.println("Player " + roundWinner + " won the round"); 
     return false; 
   } 
 
-  private boolean playersPlay(){
-    for (playerObj player:playersList){
-      playerObj currentPlayer = player; 
-      promptPlayerChoice(currentPlayer); 
-    }
-  } 
 
   private void promptPlayerChoice(playerObj currentPlayer){
-    System.out.println("It is player" + currentPlayer + "'s turn");
+    System.out.println();
     System.out.println("This is your hand: ");
     System.out.println(currentPlayer.displayHand());
     System.out.println("which one do you want to choose? 0-" + (currentPlayer.sizeOfHand()-1)); 
@@ -106,16 +86,28 @@ public class cangkulCardGame {
   } 
 
   private int processPlayerInput(playerObj currentPlayer){
+    promptPlayerChoice(currentPlayer); 
     Scanner input = new Scanner(System.in); 
     int index = input.nextInt(); 
     while(index == -1){
       currentPlayer.playerTakeCard(); 
       System.out.println("You took "+ currentPlayer.takenCard());
-      System.out.println("This is your hand now: ");
-      System.out.println(currentPlayer.displayHand()); 
+      promptPlayerChoice(currentPlayer); 
       index = input.nextInt(); 
     } 
     return index; 
+  } 
+
+  private cardObj chooseValidCard(String tableSuit, cardObj chosenCard, playerObj currentPlayer){
+    cardObj validCard = chosenCard; 
+    while(!checkChoice(tableSuit, validCard.getSuit())){
+      currentPlayer.playerTakeBackCard(validCard);
+      System.out.println(); 
+      System.out.println("The chosen card doesn't match the suit, please choose another one or retrieve another card from the deck. Press -1 to take card from deck"); 
+      int index = processPlayerInput(currentPlayer); 
+      validCard = currentPlayer.launchCard(index); 
+    }
+    return validCard; 
   } 
 
   private boolean checkChoice(String tableSuit, String chosenSuit){
@@ -146,11 +138,6 @@ public class cangkulCardGame {
     }
   }  
 
-  public void getget(){
-    System.out.println(numberOfPlayers);
-    System.out.println(deckOnTable); 
-    System.out.println(playersList.toString()); 
-  } 
 
   private boolean winGame(playerObj player){ 
     System.out.println(player.sizeOfHand()); 
